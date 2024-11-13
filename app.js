@@ -63,7 +63,7 @@ module.exports = {
 
 // Inicia el servidor
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT,'0.0.0.0', () => {
   console.log(`Servidor en ejecución en el puerto ${PORT}`);
 });
 app.set('json spaces', 2);

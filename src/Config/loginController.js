@@ -9,6 +9,9 @@ router.post('/login', (req, res) => {
   // Utiliza la conexión a la base de datos para verificar las credenciales en tu base de datos
   const query = 'SELECT * FROM account WHERE accountName = ? AND password = ? AND status = "Activo"';
   //SELECT usertype.userTypeName FROM user, usertype, account WHERE user.idUser = 1 AND user.idUserType = usertype.idUserType;
+  console.log('Login')
+  console.log(username)
+  console.log(password)
   dbConnection.query(query, [username, password], (err, results) => {
     if (err) {
       console.error('Error al consultar la base de datos:', err);
@@ -20,7 +23,7 @@ router.post('/login', (req, res) => {
         // Si las credenciales son válidas (usuario encontrado), devuelve el primer resultado como un objeto
         const user = results[0];
         const {idAccount, idUser, accountName, status} = user;
-
+	console.log('Accediendo a la informacion del usuario');
         
 
         const queryUserType = 'SELECT usertype.userTypeName FROM user, usertype, account WHERE user.idUser = ? AND user.idUserType = usertype.idUserType;';

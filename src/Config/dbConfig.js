@@ -4,7 +4,7 @@ const mysql = require('mysql2');
 const dbConfig = {
   host: 'localhost',
   user: 'root',
-  password: 'root',
+  password: '=Pulparindo123_',
   database: 'departamentos',
   multipleStatements: true, // Habilita el soporte para múltiples consultas
 };
