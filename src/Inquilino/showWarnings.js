@@ -38,7 +38,41 @@ router.post("/show-warnings", (req, res) => {
     })
 
   } else {
-    const queryWarnings = `SELECT * FROM (SELECT wt.idWarning, departamentNumber, name, surname, secondsurname, wt.warning, wt.creationDate, wt.creationTime, w2.importanceLevel FROM (SELECT w.idWarning, d.departamentNumber, u.name, u.surname, u.secondSurname, w.warning, w.creationDate, w.creationTime, w.importanceLevel FROM warning w, account a, user u, residence r, departament d, userdepartament dp WHERE a.idAccount = w.idAccount AND w.status  = "ACTIVO" AND a.idUser = u.idUser AND u.idUser = dp.idUser AND d.idDepartament = dp.idUserDepartament AND d.idResidence = r.idResidence AND r.idResidence = ${idresidencia} UNION SELECT w.idWarning, "ADMIN" as departmentNumber, u.name, u.surname, u.secondSurname, w.warning, w.creationDate, w.creationTime, w.importanceLevel FROM warning w, account a, user u, usertype ut WHERE a.idAccount = w.idAccount AND w.status  = "ACTIVO" AND a.idUser = u.idUser AND u.idUserType = ut.idUserType AND ut.userTypeName = "ADMIN" GROUP BY w.importanceLevel DESC) AS wt, warning w2 WHERE w2.idWarning = wt.idWarning) AS tablaWarning ORDER BY tablaWarning.importanceLevel DESC, tablaWarning.creationDate DESC, tablaWarning.creationTime DESC;`;
+    const queryWarnings = `SELECT * 
+FROM (
+    SELECT 
+        wt.idWarning, departamentNumber, name, surname, secondsurname, 
+        wt.warning, wt.creationDate, wt.creationTime, 
+        w2.importanceLevel
+    FROM (
+        SELECT 
+            w.idWarning, d.departamentNumber, u.name, u.surname, u.secondSurname, 
+            w.warning, w.creationDate, w.creationTime, w.importanceLevel 
+        FROM warning w
+        JOIN account a ON a.idAccount = w.idAccount
+        JOIN user u ON a.idUser = u.idUser
+        JOIN userdepartament dp ON u.idUser = dp.idUser
+        JOIN departament d ON d.idDepartament = dp.idUserDepartament
+        JOIN residence r ON d.idResidence = r.idResidence
+        WHERE w.status = "ACTIVO" 
+          AND r.idResidence = ${idresidencia} 
+        UNION
+        SELECT 
+            w.idWarning, "ADMIN" AS departmentNumber, u.name, u.surname, u.secondSurname, 
+            w.warning, w.creationDate, w.creationTime, w.importanceLevel 
+        FROM warning w
+        JOIN account a ON a.idAccount = w.idAccount
+        JOIN user u ON a.idUser = u.idUser
+        JOIN usertype ut ON u.idUserType = ut.idUserType
+        WHERE w.status = "ACTIVO" 
+          AND ut.userTypeName = "ADMIN"
+    ) AS wt
+    JOIN warning w2 ON w2.idWarning = wt.idWarning
+) AS tablaWarning 
+ORDER BY tablaWarning.importanceLevel DESC, 
+         tablaWarning.creationDate DESC, 
+         tablaWarning.creationTime DESC;
+`;
 
     dbConnection.query(queryWarnings, (err, results) => {
       if (err) {
