@@ -697,8 +697,26 @@ router.post("/admin-contracts", (req, res) => {
     });
   } else if (opt === "mostrardepartamentos") {
     const { idResidence } = req.body;
-    const query = `SELECT d.idDepartament, d.departamentNumber, d.amount AS "mensualidad", c.name AS "ciudad", s.name AS 'state', ct.name AS "pais", r.street, r.cologne, r.postalCode FROM departament d, residence r, city c, state s, country ct WHERE r.idCity = c.idCity AND c.idState = s.idState AND ct.idCountry = s.idCountry AND d.idResidence = ${idResidence} AND d.status = "ACTIVO";`;
-
+    const query = `SELECT
+    d.idDepartament,
+    d.departamentNumber,
+    d.amount AS "mensualidad",
+    c.name AS "ciudad",
+    s.name AS "state",
+    ct.name AS "pais",
+    r.street,
+    r.cologne,
+    r.postalCode
+FROM
+    departament d
+    JOIN residence r ON d.idResidence = r.idResidence
+    JOIN city c ON r.idCity = c.idCity
+    JOIN state s ON c.idState = s.idState
+    JOIN country ct ON s.idCountry = ct.idCountry
+WHERE
+    d.idResidence = ${idResidence}
+    AND d.status = "ACTIVO";`;
+    // console.log(query);
     dbConnection.query(query, (err, results) => {
       if (err) {
         console.error("Error al consultar la base de datos:", err);
