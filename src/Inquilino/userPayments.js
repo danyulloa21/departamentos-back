@@ -7,6 +7,8 @@ router.post('/history-payment',(req, res) => {
 
     const queryPayments = `SELECT c.concept, d.debtDate, p.paymentDate, pt.paymentTypeName, d.amount, d.status FROM payment p, paymenttype pt, debt d, userdepartament ud, concept c WHERE d.idUserDepartament = ud.idUserDepartament AND ud.idUserDepartament = ${iduserdepartment} AND ud.status = "ALOJANDO" AND d.status = "PAGADO" AND p.idDebt = d.idDebt AND p.idPaymentType = pt.idPaymentType AND c.idConcept = d.idConcept;`
 
+    // console.log(queryPayments)
+
     dbConnection.query(queryPayments, (err, results) => {
         if (err) {
             console.error("Error al consultar la base de datos:", err);

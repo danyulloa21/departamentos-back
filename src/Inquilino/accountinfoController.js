@@ -5,8 +5,9 @@ const dbConnection = require("../Config/dbConfig");
 router.post("/accountpage", (req, res) => {
   const { userid } = req.body;
   // console.log(userid);
-  const queryUserInfo = `SELECT ud.idUserDepartament, u.name, u.surname, u.secondSurname, u.email, d.departamentNumber, r.idResidence, r.street, r.postalCode, r.cologne, (SELECT ct.name FROM residence re, city ct, tenantinformation t WHERE ct.idCity = re.idCity AND t.idCity = ct.idCity AND t.idUser = ${userid} LIMIT 1) as residenceCity, ti.idTenantInformation, co.name as countryName, st.name as stateName, ci.name as cityName, ti.job, ti.socialSecurity, ti.bloodType, ti.birthdate, ti.ineNumber FROM tenantinformation ti, user u, country co, state st, city ci, userdepartament ud, departament d, residence r WHERE ti.idUser = u.idUser AND u.idUser = ${userid} AND ti.idCity = ci.idCity AND ci.idState = st.idState AND st.idCountry = co.idCountry AND ud.idDepartament = d.departamentNumber AND d.idResidence = r.idResidence AND ud.status = "ALOJANDO";`;
-
+  const queryUserInfo = `SELECT ud.idUserDepartament, u.name, u.surname, u.secondSurname, u.email, d.departamentNumber, r.idResidence, r.street, r.postalCode, r.cologne, ( SELECT c.name FROM city c JOIN tenantinformation tn ON c.idCity = tn.idCity WHERE tn.idUser = ${userid} ) AS residenceCity, ti.idTenantInformation, co.name AS countryName, st.name AS stateName, ci.name AS cityName, ti.job, ti.socialSecurity, ti.bloodType, ti.birthdate, ti.ineNumber FROM tenantinformation ti, user u, country co, state st, city ci, userdepartament ud, departament d, residence r WHERE ti.idUser = u.idUser AND u.idUser = 9 AND ti.idCity = ci.idCity AND ci.idState = st.idState AND st.idCountry = co.idCountry AND ud.idUser = u.idUser AND ud.idDepartament = d.idDepartament AND d.idResidence = r.idResidence AND ud.status = "ALOJANDO";
+`;
+  // console.log(queryUserInfo);
   dbConnection.query(queryUserInfo, (err, results) => {
     if (err) {
       console.error("Error al consultar la base de datos:", err);
