@@ -52,7 +52,7 @@ FROM (
         JOIN account a ON a.idAccount = w.idAccount
         JOIN user u ON a.idUser = u.idUser
         JOIN userdepartament dp ON u.idUser = dp.idUser
-        JOIN departament d ON d.idDepartament = dp.idUserDepartament
+        JOIN departament d ON d.idDepartament = dp.idDepartament
         JOIN residence r ON d.idResidence = r.idResidence
         WHERE w.status = "ACTIVO" 
           AND r.idResidence = ${idresidencia} 
@@ -73,6 +73,8 @@ ORDER BY tablaWarning.importanceLevel DESC,
          tablaWarning.creationDate DESC, 
          tablaWarning.creationTime DESC;
 `;
+
+console.log(queryWarnings);
 
     dbConnection.query(queryWarnings, (err, results) => {
       if (err) {
